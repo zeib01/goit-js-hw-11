@@ -1,48 +1,45 @@
-import axios from "axios";
+import axios from 'axios';
 // Описаний у документації
-import iziToast from "izitoast";
+import iziToast from 'izitoast';
 // Додатковий імпорт стилів
-import "izitoast/dist/css/iziToast.min.css";
+import 'izitoast/dist/css/iziToast.min.css';
 
-
-const gallery = document.querySelector(".gallery");
-const form = document.querySelector(".form");
+const gallery = document.querySelector('.gallery');
+const form = document.querySelector('.form');
 const input = document.querySelector("input[name='search-text']");
-const userList = document.querySelector(".user-list");
+const photoList = document.querySelector('.user-list');
 
-const API_KEY = "33475610-696620aeee3e1938961deeefe";
-const BASE_URL = "https://pixabay.com/api/";
-
-
+const API_KEY = '33475610-696620aeee3e1938961deeefe';
+const BASE_URL = 'https://pixabay.com/api/';
 
 if (!gallery) {
-  console.error("Gallery element not found!");
+  console.error('Gallery element not found!');
 }
 
-form.addEventListener("submit", function (event) {
+form.addEventListener('submit', function (event) {
   event.preventDefault();
   const query = input.value.trim();
 
   if (!query) {
     iziToast.toast.warning({
-      title: "Warning",
-      message: "Please enter a search term.",
-      position: "topRight",
+      title: 'Warning',
+      message: 'Please enter a search term.',
+      position: 'topRight',
       timeout: 5000,
-    })
-    return
+    });
+    return;
   }
 
   if (gallery) {
-    gallery.innerHTML = ""; // Очищуємо тільки якщо елемент існує
+    gallery.innerHTML = ''; // Очищуємо тільки якщо елемент існує
   }
   axios
     .get(BASE_URL, {
       params: {
         key: API_KEY,
         q: query,
-        image_type: "photo",
-        orientation: "horizontal",
+        image_type: 'photo',
+        orientation: 'horizontal',
         safesearch: true,
       },
     })
@@ -51,15 +48,16 @@ form.addEventListener("submit", function (event) {
 
       if (images.length === 0) {
         iziToast.warning({
-          title: "Warning",
-          message: "Sorry, there are no images matching your search query. Please try again!",
-          position: "topRight",
+          title: 'Warning',
+          message:
+            'Sorry, there are no images matching your search query. Please try again!',
+          position: 'topRight',
           timeout: 5000,
-      });
-    }
-       const markup = images
+        });
+      }
+      const markup = images
         .map(
-          (image) => `
+          image => `
           <li class="gallery-item">
             <a href="${image.largeImageURL}" target="_blank">
               <img src="${image.webformatURL}" alt="${image.tags}" width="300"/>
@@ -72,18 +70,18 @@ form.addEventListener("submit", function (event) {
             </div>
           </li>`
         )
-        .join("");
-        if (gallery) {
-          gallery.innerHTML = markup;
-        }
-  })
+        .join('');
+      if (gallery) {
+        gallery.innerHTML = markup;
+      }
+    })
 
     .catch(function (error) {
-      console.error("Error fetching images:", error);
+      console.error('Error fetching images:', error);
       iziToast.error({
-        title: "Error",
-        message: "Failed to fetch images. Please try again later.",
-        position: "topRight",
+        title: 'Error',
+        message: 'Failed to fetch images. Please try again later.',
+        position: 'topRight',
         timeout: 5000,
       });
     });

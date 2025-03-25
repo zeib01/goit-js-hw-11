@@ -5,13 +5,19 @@ import iziToast from "izitoast";
 import "izitoast/dist/css/iziToast.min.css";
 
 
-
+const gallery = document.querySelector(".gallery");
 const form = document.querySelector(".form");
 const input = document.querySelector("input[name='search-text']");
 const userList = document.querySelector(".user-list");
 
 const API_KEY = "33475610-696620aeee3e1938961deeefe";
 const BASE_URL = "https://pixabay.com/api/";
+
+
+
+if (!gallery) {
+  console.error("Gallery element not found!");
+}
 
 form.addEventListener("submit", function (event) {
   event.preventDefault();
@@ -27,6 +33,9 @@ form.addEventListener("submit", function (event) {
     return
   }
 
+  if (gallery) {
+    gallery.innerHTML = ""; // Очищуємо тільки якщо елемент існує
+  }
   axios
     .get(BASE_URL, {
       params: {
@@ -47,12 +56,8 @@ form.addEventListener("submit", function (event) {
           position: "topRight",
           timeout: 5000,
       });
-      userList.innerHTML = ""; // Очищаємо список, якщо нічого не знайдено
-      return;
     }
-
-
-      const markup = images
+       const markup = images
         .map(
           (image) => `
           <li class="gallery-item">
@@ -68,9 +73,11 @@ form.addEventListener("submit", function (event) {
           </li>`
         )
         .join("");
+        if (gallery) {
+          gallery.innerHTML = markup;
+        }
+  })
 
-      userList.innerHTML = markup;
-    })
     .catch(function (error) {
       console.error("Error fetching images:", error);
       iziToast.error({
@@ -81,18 +88,3 @@ form.addEventListener("submit", function (event) {
       });
     });
 });
-
-function handleEmptyResponse(data) {
-  if (Array.isArray(data) && data.length === 0) {
-    iziToast.warning({
-      title: "Warning",
-      message: "Sorry, there are no images matching your search query. Please try again!",
-      position: "topRight",
-      timeout: 5000,
-    });
-  }
-}
-
-// Приклад виклику функції
-const response = []; // Симуляція відповіді бекенду
-handleEmptyResponse(response);
